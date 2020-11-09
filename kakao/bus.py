@@ -4,8 +4,8 @@
 n = 10
 t = 60
 m = 45
-timetable = ["23:59", "23:59","23:59","23:59","23:59","23:59","23:59","23:59","23:59","23:59","23:59","23:59","23:59","23:59","23:59","23:59"]
-#timetable = ["00:01", "00:01", "00:01", "00:01", "00:01"]
+#timetable = ["23:59", "23:59","23:59","23:59","23:59","23:59","23:59","23:59","23:59","23:59","23:59","23:59","23:59","23:59","23:59","23:59"]
+timetable = ["23:59", "23:59", "23:59", "23:59", "23:59"]
 
 def cal(time, lat, opt):
     h, m = map(int, time.split(":"))
@@ -57,31 +57,42 @@ def min_time(timetable):
             mtime = time
     return mtime
 
-ii = 0
-result = "-1:-1"
-while timetable:
-    #find time for the last one seat
-    a = min_time(timetable)
 
-    if (n * m - ii) == 2: # one seat
-        result = cal(a, 1, -1)
-        break
+
+lat = 0
+table = []
+start = "09:00"
+start = cal(start, t, -1)
+for i in range(n):
+    
+    tmp = cal(start, t, 1)
+    table = table + [tmp] * m
+    start = tmp
+
+last_bus = table[-1]
+    
+ii = 0
+while timetable:
+    m = min_time(timetable)
+
+    for i in range(len(table)):
+        if comp(m, table[i]) != -1:
+            del table[i]
+            break
+
 
     for i in range(len(timetable)):
-        if a == timetable[i]:
+        if timetable[i] == m:
+            prior = timetable[i]
             del timetable[i]
             break
-    ii += 1
 
-        # result = time(n * m) - 1
 
-time = "09:00"
-for _ in range(n - 1):
-    time = cal(time, t, 1)
 
-if result == "-1:-1":
-    result = time#last time of bus
-    
-
+if last_bus in table:
+    result = last_bus
+else:
+    result = cal(prior, 1, -1)
 
 print(result)
+    
